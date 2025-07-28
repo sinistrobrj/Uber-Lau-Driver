@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lucros Uber</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <!-- Tela 1: Calendário -->
+    <div id="tela1">
+      <!-- Resumo semanal e mensal -->
+<div id="resumo-geral">
+  <h2>Resumo Semanal</h2>
+  <div id="resumo-semana"></div>
+
+  <h2>Resumo Mensal</h2>
+  <div id="resumo-mes"></div>
+</div>
+
+      <h1>Lucros Uber - Selecione o Dia</h1>
+      <div class="mes-selecao">
+        <button onclick="alterarMes(-1)">←</button>
+        <span id="mesAnoAtual"></span>
+        <button onclick="alterarMes(1)">→</button>
+      </div>
+      <div id="calendario" class="calendario-grid"></div>
+    </div>
+
+    <!-- Telas 2 a 4 (reutilizáveis) -->
+    <div id="conteudo-dia" class="hidden">
+      <h2>Dia: <span id="dataSelecionada"></span></h2>
+
+      <div id="dados-formulario"></div>
+      <div id="botoes-dados">
+        <button onclick="salvarDadosDia()">💾 Salvar</button>
+        <button onclick="excluirDadosDia()">🗑️ Excluir</button>
+        <button onclick="voltarParaCalendario()">↩ Voltar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

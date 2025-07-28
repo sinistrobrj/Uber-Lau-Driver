@@ -1,0 +1,111 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f0f2f5;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+  text-align: center;
+  color: #2c3e50;
+}
+
+.mes-selecao {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.mes-selecao button {
+  font-size: 18px;
+  padding: 5px 10px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#mesAnoAtual {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.calendario-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  padding: 10px;
+}
+
+.calendario-grid div {
+  text-align: center;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #ecf0f1;
+  color: #2c3e50;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.calendario-grid div:hover {
+  background-color: #d0e6f9;
+}
+
+.calendario-grid .hoje {
+  border: 2px solid #2ecc71;
+}
+
+.calendario-grid .com-dados {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.calendario-grid .sem-dados {
+  background-color: #bdc3c7;
+  color: #444;
+}
+
+.hidden {
+  display: none;
+}
+
+input, button, select {
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+#botoes-dados button {
+  margin-top: 10px;
+}
+#resumo-geral {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #ddd;
+}
+
+#resumo-geral h2 {
+  margin-top: 20px;
+  color: #34495e;
+}
+
+#resumo-geral p {
+  margin: 5px 0;
+  font-weight: 500;
+}
