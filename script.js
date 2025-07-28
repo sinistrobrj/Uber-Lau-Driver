@@ -227,4 +227,15 @@ function atualizarGraficoLucro() {
   });
 }
 
-window.onload = () => atualizarGraficoLucro();
+function inicializarApp() {
+  atualizarCalendario();
+  atualizarGraficoLucro();
+}
+
+window.onload = function () {
+  inicializarApp();
+  setTimeout(() => {
+    const splash = document.getElementById('splash-screen');
+    if (splash) splash.style.display = 'none';
+  }, 2000);
+};
