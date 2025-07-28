@@ -25,7 +25,7 @@
       <div id="resumo-geral">
         <h2>Resumo Geral</h2>
 
-        <div style="display: flex; gap: 30px; align-items: start;">
+        <div style="display: flex; gap: 30px; align-items: start; flex-wrap: wrap;">
           <div>
             <h3>Semana</h3>
             <div id="resumo-semana"></div>
@@ -33,8 +33,18 @@
             <h3>Mês</h3>
             <div id="resumo-mes"></div>
 
-            <label for="metaDiaria">Meta Diária de Lucro (R$):</label>
-            <input type="number" id="metaDiaria" value="250">
+            <h3>Metas</h3>
+            <label for="metaDiaria">Meta Diária (R$):</label>
+            <input type="number" id="metaDiaria" value="250"><br>
+
+            <label for="metaSemanal">Meta Semanal (R$):</label>
+            <input type="number" id="metaSemanal" value="1500"><br>
+
+            <label for="metaMensal">Meta Mensal (R$):</label>
+            <input type="number" id="metaMensal" value="6000"><br>
+
+            <div id="alertaMeta" class="alerta-meta"></div>
+            <div id="alertaManutencao" class="alerta-manutencao"></div>
           </div>
 
           <div>

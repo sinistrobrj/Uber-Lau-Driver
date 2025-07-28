@@ -1,161 +1,193 @@
+:root {
+  --cor-fundo: #f9f9f9;
+  --cor-borda: #ccc;
+  --cor-botao: #3498db;
+  --cor-botao-hover: #2980b9;
+  --cor-texto: #2c3e50;
+  --cor-verde-claro: #dff0d8;
+  --cor-verde-escuro: #2e7d32;
+  --cor-hoje: #ecf0f1;
+  --cor-sem-dados: #f4f4f4;
+  --cor-sem-dados-texto: #999;
+  --cor-corrida: #e3f2fd;
+  --cor-corrida-borda: #42a5f5;
+}
+
 body {
   font-family: Arial, sans-serif;
-  background: #f2f2f2;
+  background-color: var(--cor-fundo);
   margin: 0;
   padding: 0;
+  color: #333;
 }
 
 .container {
-  max-width: 800px;
-  margin: auto;
-  background: white;
+  max-width: 1000px;
+  margin: 0 auto;
   padding: 20px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 h1, h2, h3 {
-  color: #2c3e50;
+  color: var(--cor-texto);
 }
 
 button {
-  background-color: #2ecc71;
+  padding: 6px 12px;
+  margin: 4px 0;
+  background-color: var(--cor-botao);
   color: white;
   border: none;
-  padding: 10px 15px;
-  margin-top: 10px;
-  cursor: pointer;
   border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
 }
 
 button:hover {
-  background-color: #27ae60;
+  background-color: var(--cor-botao-hover);
+}
+
+button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
 }
 
 input[type="number"] {
   width: 100%;
-  padding: 8px;
-  margin: 5px 0 10px 0;
-  box-sizing: border-box;
-  border: 1px solid #ccc;
+  padding: 6px;
+  margin-bottom: 10px;
+  border: 1px solid var(--cor-borda);
   border-radius: 4px;
+  font-size: 14px;
 }
 
-label {
-  display: block;
-  margin-top: 10px;
-  font-weight: bold;
+select {
+  padding: 6px;
+  font-size: 14px;
+  margin: 5px 0 10px 0;
 }
 
-/* Calendário */
 .calendario-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
-  margin-top: 20px;
+  gap: 4px;
+  margin-top: 10px;
 }
 
 .calendario-grid div {
-  padding: 15px;
+  border: 1px solid var(--cor-borda);
+  padding: 8px;
   text-align: center;
-  background-color: #ecf0f1;
   border-radius: 4px;
   cursor: pointer;
+}
+
+.calendario-grid div.hoje {
+  border: 2px solid var(--cor-botao-hover);
+  font-weight: bold;
+  background-color: var(--cor-hoje);
+}
+
+.calendario-grid div.com-dados {
+  background-color: var(--cor-verde-claro);
+  color: var(--cor-verde-escuro);
   font-weight: bold;
 }
 
-.calendario-grid div:hover {
-  background-color: #bdc3c7;
+.calendario-grid div.sem-dados {
+  background-color: var(--cor-sem-dados);
+  color: var(--cor-sem-dados-texto);
 }
 
-.hoje {
-  border: 2px solid #2980b9;
-}
-
-.com-dados {
-  background-color: #2ecc71;
-  color: blue;
-}
-
-.sem-dados {
-  background-color: #e74c3c;
-  color: white;
-}
-
-/* Navegação mês */
-.mes-selecao {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.mes-selecao button {
-  margin: 0 10px;
-  padding: 5px 10px;
-}
-
-/* Ocultar telas */
 .hidden {
   display: none;
 }
 
-/* Corridas */
-#lista-corridas .corrida-item {
-  margin-bottom: 10px;
-  padding: 8px;
-  background: #f4f6f8;
-  border-radius: 8px;
-  border-left: 5px solid #2ecc71;
+#lista-corridas {
+  margin-top: 10px;
 }
 
-/* Resumo Geral */
+.corrida-item {
+  background-color: var(--cor-corrida);
+  border-left: 4px solid var(--cor-corrida-borda);
+  padding: 6px;
+  margin-bottom: 5px;
+  border-radius: 4px;
+}
+
+.mes-selecao {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
 #resumo-geral {
-  margin-top: 40px;
-  padding-top: 20px;
-  border-top: 1px solid #ddd;
+  margin-top: 30px;
+  background-color: #fff;
+  border-radius: 6px;
+  padding: 20px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
 }
 
 #resumo-geral h2 {
-  margin-top: 20px;
-  color: #34495e;
+  margin-top: 0;
 }
 
-#resumo-geral p {
-  margin: 5px 0;
-  font-weight: 500;
+#resumo-geral > div {
+  display: flex;
+  flex-wrap: wrap;
 }
 
-/* Despesas */
-#tela-despesas label,
-#conteudo-dia label {
-  margin-top: 10px;
+#resumo-geral > div > div {
+  flex: 1 1 300px;
+  min-width: 250px;
+}
+
+#metaDiaria {
+  width: 100%;
+  margin-top: 5px;
+}
+
+label {
   font-weight: bold;
+  margin-top: 10px;
+  display: block;
 }
 
-#botoes-dados, #botoes-despesas {
-  margin-top: 20px;
+#botoes-dados,
+#botoes-despesas {
   display: flex;
   gap: 10px;
-  flex-wrap: wrap;
+  margin-top: 10px;
 }
 
-#resumo-grafico-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  align-items: flex-start;
-  margin-top: 40px;
-}
-
-#resumo-geral {
-  flex: 1 1 300px;
-}
-
-#grafico-lucro {
-  flex: 1 1 300px;
-}
-
-#grafico-lucro canvas {
+canvas {
+  background-color: #ffffff;
+  border: 1px solid var(--cor-borda);
+  padding: 10px;
+  border-radius: 6px;
   width: 100% !important;
+  max-width: 500px;
   height: auto !important;
+}
+
+#tela1,
+#conteudo-dia,
+#tela-despesas {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+  margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+  .mes-selecao {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #resumo-geral > div {
+    flex-direction: column;
+  }
 }

@@ -1,3 +1,5 @@
+// Uber Lau Driver - script.js completo com todas as funcionalidades integradas
+
 let dataAtual = new Date();
 let dataSelecionada = null;
 
@@ -17,7 +19,6 @@ function atualizarCalendario() {
 
   const ano = dataAtual.getFullYear();
   const mes = dataAtual.getMonth();
-
   const primeiroDia = new Date(ano, mes, 1).getDay();
   const diasNoMes = new Date(ano, mes + 1, 0).getDate();
 
@@ -25,21 +26,20 @@ function atualizarCalendario() {
   mesAnoLabel.textContent = `${nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1)} ${ano}`;
 
   for (let i = 0; i < primeiroDia; i++) {
-    const vazio = document.createElement('div');
-    calendario.appendChild(vazio);
+    calendario.appendChild(document.createElement('div'));
   }
 
   for (let dia = 1; dia <= diasNoMes; dia++) {
     const div = document.createElement('div');
     const dataStr = `${ano}-${(mes + 1).toString().padStart(2, '0')}-${dia.toString().padStart(2, '0')}`;
     div.textContent = dia;
+    div.classList.add(dadosUber[dataStr] ? 'com-dados' : 'sem-dados');
 
     const hoje = new Date();
     if (dia === hoje.getDate() && mes === hoje.getMonth() && ano === hoje.getFullYear()) {
       div.classList.add('hoje');
     }
 
-    div.classList.add(dadosUber[dataStr] ? 'com-dados' : 'sem-dados');
     div.onclick = () => abrirDia(dataStr);
     calendario.appendChild(div);
   }
@@ -53,34 +53,24 @@ function abrirDia(dataStr) {
   document.getElementById('conteudo-dia').classList.remove('hidden');
   document.getElementById('tela-despesas').classList.add('hidden');
   document.getElementById('dataSelecionada').textContent = dataStr;
-
   mostrarFormulario(dataStr);
 }
 
 function mostrarFormulario(dataStr) {
-  const dados = dadosUber[dataStr] || {
-    odometroInicial: '',
-    odometroFinal: '',
-    corridas: [],
-    despesas: { combustivel: '', alimentacao: '', limpeza: '' }
-  };
-
+  const dados = dadosUber[dataStr] || { odometroInicial: '', odometroFinal: '', corridas: [], despesas: {} };
   const container = document.getElementById('dados-formulario');
+
   container.innerHTML = `
     <label>Odômetro Inicial:</label>
     <input type="number" id="odInicial" value="${dados.odometroInicial}">
-
     <label>Odômetro Final:</label>
     <input type="number" id="odFinal" value="${dados.odometroFinal}">
-
     <h3>Nova Corrida</h3>
     <input type="number" id="novaKm" placeholder="KM">
     <input type="number" id="novoValor" placeholder="Valor (R$)">
     <button onclick="salvarCorrida()">Salvar Corrida</button>
-
     <h3>Corridas Salvas</h3>
     <div id="lista-corridas"></div>
-
     <button onclick="abrirTelaDespesas()">Ir para Despesas</button>
   `;
 
@@ -91,19 +81,9 @@ function salvarCorrida() {
   const km = parseFloat(document.getElementById('novaKm').value);
   const valor = parseFloat(document.getElementById('novoValor').value);
 
-  if (isNaN(km) || isNaN(valor)) {
-    alert("Preencha KM e Valor corretamente.");
-    return;
-  }
+  if (isNaN(km) || isNaN(valor)) return alert('Preencha KM e Valor corretamente.');
 
-  if (!dadosUber[dataSelecionada]) {
-    dadosUber[dataSelecionada] = {
-      odometroInicial: '',
-      odometroFinal: '',
-      corridas: [],
-      despesas: {}
-    };
-  }
+  if (!dadosUber[dataSelecionada]) dadosUber[dataSelecionada] = { corridas: [], despesas: {} };
 
   dadosUber[dataSelecionada].corridas.push({ km, valor });
   document.getElementById('novaKm').value = '';
@@ -116,8 +96,7 @@ function atualizarListaCorridas(lista) {
   div.innerHTML = '';
   lista.forEach((c, i) => {
     const item = document.createElement('div');
-    item.classList.add('corrida-item');
-    item.innerHTML = `🚗 Corrida ${i + 1} - ${c.km} km - R$ ${c.valor.toFixed(2)}`;
+    item.textContent = `🚗 Corrida ${i + 1} - ${c.km} km - R$ ${c.valor.toFixed(2)}`;
     div.appendChild(item);
   });
 }
@@ -127,7 +106,6 @@ function abrirTelaDespesas() {
   document.getElementById('tela-despesas').classList.remove('hidden');
   document.getElementById('conteudo-dia').classList.add('hidden');
   document.getElementById('dataDespesas').textContent = dataSelecionada;
-
   document.getElementById('combustivel').value = dados.despesas.combustivel || '';
   document.getElementById('alimentacao').value = dados.despesas.alimentacao || '';
   document.getElementById('limpeza').value = dados.despesas.limpeza || '';
@@ -138,18 +116,11 @@ function salvarDespesas() {
   const alimentacao = parseFloat(document.getElementById('alimentacao').value) || 0;
   const limpeza = parseFloat(document.getElementById('limpeza').value) || 0;
 
-  if (!dadosUber[dataSelecionada]) {
-    dadosUber[dataSelecionada] = {
-      odometroInicial: '',
-      odometroFinal: '',
-      corridas: [],
-      despesas: {}
-    };
-  }
+  if (!dadosUber[dataSelecionada]) dadosUber[dataSelecionada] = { corridas: [], despesas: {} };
 
   dadosUber[dataSelecionada].despesas = { combustivel, alimentacao, limpeza };
   localStorage.setItem('dadosUber', JSON.stringify(dadosUber));
-  alert("Despesas salvas!");
+  alert('Despesas salvas!');
   voltarParaCorridas();
 }
 
@@ -162,19 +133,11 @@ function voltarParaCorridas() {
 function salvarDadosDia() {
   const odInicial = parseFloat(document.getElementById('odInicial').value);
   const odFinal = parseFloat(document.getElementById('odFinal').value);
-
-  if (!dadosUber[dataSelecionada]) {
-    dadosUber[dataSelecionada] = {
-      corridas: [],
-      despesas: {}
-    };
-  }
-
+  if (!dadosUber[dataSelecionada]) dadosUber[dataSelecionada] = { corridas: [], despesas: {} };
   dadosUber[dataSelecionada].odometroInicial = odInicial;
   dadosUber[dataSelecionada].odometroFinal = odFinal;
-
   localStorage.setItem('dadosUber', JSON.stringify(dadosUber));
-  alert("Dados salvos com sucesso!");
+  alert('Dados salvos com sucesso!');
   voltarParaCalendario();
 }
 
@@ -187,42 +150,26 @@ function voltarParaCalendario() {
 
 function atualizarResumoGeral() {
   const hoje = new Date();
-  const semanaInicio = new Date(hoje);
-  semanaInicio.setDate(hoje.getDate() - hoje.getDay());
-
+  const semanaInicio = new Date(hoje); semanaInicio.setDate(hoje.getDate() - hoje.getDay());
   const mesInicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-
-  const resumoSemana = calcularResumoPeriodo(semanaInicio, hoje);
-  const resumoMes = calcularResumoPeriodo(mesInicio, hoje);
-
-  document.getElementById('resumo-semana').innerHTML = formatarResumo(resumoSemana);
-  document.getElementById('resumo-mes').innerHTML = formatarResumo(resumoMes);
+  document.getElementById('resumo-semana').innerHTML = formatarResumo(calcularResumoPeriodo(semanaInicio, hoje));
+  document.getElementById('resumo-mes').innerHTML = formatarResumo(calcularResumoPeriodo(mesInicio, hoje));
 }
 
 function calcularResumoPeriodo(inicio, fim) {
-  let totalKm = 0;
-  let totalCorridas = 0;
-  let totalDespesas = 0;
-
+  let totalKm = 0, totalCorridas = 0, totalDespesas = 0;
   for (const data in dadosUber) {
     const dt = new Date(data);
     if (dt >= inicio && dt <= fim) {
-      const entrada = dadosUber[data];
-      const kmDia = entrada.odometroFinal - entrada.odometroInicial;
-      totalKm += isNaN(kmDia) ? 0 : kmDia;
-
-      const valorDia = entrada.corridas.reduce((acc, c) => acc + c.valor, 0);
-      totalCorridas += valorDia;
-
-      const d = entrada.despesas || {};
-      totalDespesas += (parseFloat(d.combustivel) || 0) + (parseFloat(d.alimentacao) || 0) + (parseFloat(d.limpeza) || 0);
+      const e = dadosUber[data];
+      totalKm += (e.odometroFinal - e.odometroInicial) || 0;
+      totalCorridas += e.corridas.reduce((a, c) => a + c.valor, 0);
+      const d = e.despesas || {};
+      totalDespesas += ['combustivel', 'alimentacao', 'limpeza'].reduce((s, k) => s + (parseFloat(d[k]) || 0), 0);
     }
   }
-
   const lucro = totalCorridas - totalDespesas;
-  const lucroPorKm = totalKm > 0 ? lucro / totalKm : 0;
-
-  return { totalKm, totalCorridas, totalDespesas, lucro, lucroPorKm };
+  return { totalKm, totalCorridas, totalDespesas, lucro, lucroPorKm: totalKm > 0 ? lucro / totalKm : 0 };
 }
 
 function formatarResumo(r) {
@@ -231,8 +178,7 @@ function formatarResumo(r) {
     <p>Ganhos brutos: R$ ${r.totalCorridas.toFixed(2)}</p>
     <p>Despesas: R$ ${r.totalDespesas.toFixed(2)}</p>
     <p><strong>Lucro: R$ ${r.lucro.toFixed(2)}</strong></p>
-    <p>Lucro por km: R$ ${r.lucroPorKm.toFixed(2)}</p>
-  `;
+    <p>Lucro por km: R$ ${r.lucroPorKm.toFixed(2)}</p>`;
 }
 
 function atualizarGraficoLucro() {
@@ -241,77 +187,44 @@ function atualizarGraficoLucro() {
   let inicio, fim;
 
   if (filtro === 'semana') {
-    inicio = new Date(hoje);
-    inicio.setDate(hoje.getDate() - hoje.getDay());
-    fim = new Date(hoje);
+    inicio = new Date(hoje); inicio.setDate(hoje.getDate() - hoje.getDay()); fim = new Date(hoje);
   } else if (filtro === 'mes') {
     inicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
     fim = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
-  } else if (filtro === 'mesPassado') {
+  } else {
     inicio = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
     fim = new Date(hoje.getFullYear(), hoje.getMonth(), 0);
   }
 
   const dadosPorDia = [];
-
   for (const dataStr in dadosUber) {
     const dt = new Date(dataStr);
     if (dt >= inicio && dt <= fim) {
       const entrada = dadosUber[dataStr];
       const totalCorridas = entrada.corridas.reduce((s, c) => s + c.valor, 0);
       const despesas = entrada.despesas || {};
-      const totalDespesas = (parseFloat(despesas.combustivel) || 0) + (parseFloat(despesas.alimentacao) || 0) + (parseFloat(despesas.limpeza) || 0);
-      const lucro = totalCorridas - totalDespesas;
-      dadosPorDia.push({ dia: dt.getDate(), lucro });
+      const totalDespesas = ['combustivel', 'alimentacao', 'limpeza'].reduce((t, k) => t + (parseFloat(despesas[k]) || 0), 0);
+      dadosPorDia.push({ dia: dt.getDate(), lucro: totalCorridas - totalDespesas });
     }
   }
 
   dadosPorDia.sort((a, b) => a.dia - b.dia);
-
   const meta = parseFloat(document.getElementById('metaDiaria').value) || 250;
 
   const ctx = document.getElementById('lucroChart').getContext('2d');
-  if (window.graficoLucroInstance) {
-    window.graficoLucroInstance.destroy();
-  }
+  if (window.graficoLucroInstance) window.graficoLucroInstance.destroy();
 
   window.graficoLucroInstance = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: dadosPorDia.map(d => `Dia ${d.dia}`),
       datasets: [
-        {
-          label: 'Lucro (R$)',
-          data: dadosPorDia.map(d => d.lucro),
-          backgroundColor: '#2ecc71'
-        },
-        {
-          type: 'line',
-          label: 'Meta Diária',
-          data: dadosPorDia.map(() => meta),
-          borderColor: '#e74c3c',
-          borderWidth: 2,
-          fill: false,
-          pointRadius: 0
-        }
+        { label: 'Lucro (R$)', data: dadosPorDia.map(d => d.lucro), backgroundColor: '#2ecc71' },
+        { type: 'line', label: 'Meta Diária', data: dadosPorDia.map(() => meta), borderColor: '#e74c3c', fill: false, pointRadius: 0 }
       ]
     },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: 'top'
-        }
-      },
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
+    options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } }
   });
 }
 
-window.onload = () => {
-  atualizarGraficoLucro();
-};
+window.onload = () => atualizarGraficoLucro();
