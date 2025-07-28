@@ -45,6 +45,8 @@ function atualizarCalendario() {
   }
 
   atualizarResumoGeral();
+  atualizarGraficoLucro();
+  verificarMetaBatidaHoje();
 }
 
 function abrirDia(dataStr) {
@@ -225,6 +227,27 @@ function atualizarGraficoLucro() {
     },
     options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } }
   });
+}
+
+function verificarMetaBatidaHoje() {
+  const hoje = new Date();
+  const dataStr = hoje.toISOString().split('T')[0];
+  const entrada = dadosUber[dataStr];
+  if (!entrada) return;
+  const totalCorridas = entrada.corridas.reduce((s, c) => s + c.valor, 0);
+  const despesas = entrada.despesas || {};
+  const totalDespesas = ['combustivel', 'alimentacao', 'limpeza'].reduce((t, k) => t + (parseFloat(despesas[k]) || 0), 0);
+  const lucro = totalCorridas - totalDespesas;
+  const meta = parseFloat(document.getElementById('metaDiaria').value) || 250;
+
+  const alerta = document.getElementById('alertaMeta');
+  if (lucro >= meta) {
+    alerta.textContent = `🎉 Meta do dia batida! Lucro: R$ ${lucro.toFixed(2)}`;
+    alerta.style.display = 'block';
+  } else {
+    alerta.textContent = '';
+    alerta.style.display = 'none';
+  }
 }
 
 function inicializarApp() {
