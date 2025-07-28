@@ -238,3 +238,51 @@ function formatarResumo(r) {
     <p>Lucro por km: R$ ${r.lucroPorKm.toFixed(2)}</p>
   `;
 }
+
+// Cria o gráfico de lucros por dia do mês atual
+function atualizarGraficoLucro() {
+  const mesAtual = new Date().getMonth();
+  const anoAtual = new Date().getFullYear();
+
+  const dadosPorDia = [];
+
+  for (let dia = 1; dia <= 31; dia++) {
+    const dataStr = `${anoAtual}-${(mesAtual + 1).toString().padStart(2, '0')}-${dia.toString().padStart(2, '0')}`;
+    const dados = dadosUber[dataStr];
+    if (dados) {
+      const totalCorridas = dados.corridas.reduce((s, c) => s + c.valor, 0);
+      const despesas = dados.despesas || {};
+      const totalDespesas = 
+        (parseFloat(despesas.combustivel) || 0) + 
+        (parseFloat(despesas.alimentacao) || 0) + 
+        (parseFloat(despesas.limpeza) || 0);
+      const lucro = totalCorridas - totalDespesas;
+      dadosPorDia.push({ dia, lucro });
+    }
+  }
+
+  const ctx = document.getElementById('lucroChart').getContext('2d');
+  if (window.graficoLucroInstance) {
+    window.graficoLucroInstance.destroy(); // remove gráfico antigo
+  }
+
+  window.graficoLucroInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: dadosPorDia.map(d => `Dia ${d.dia}`),
+      datasets: [{
+        label: 'Lucro (R$)',
+        data: dadosPorDia.map(d => d.lucro),
+        backgroundColor: '#2ecc71'
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}

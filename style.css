@@ -138,3 +138,24 @@ label {
   gap: 10px;
   flex-wrap: wrap;
 }
+
+#resumo-grafico-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-start;
+  margin-top: 40px;
+}
+
+#resumo-geral {
+  flex: 1 1 300px;
+}
+
+#grafico-lucro {
+  flex: 1 1 300px;
+}
+
+#grafico-lucro canvas {
+  width: 100% !important;
+  height: auto !important;
+}
