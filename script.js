@@ -185,7 +185,6 @@ function voltarParaCalendario() {
   atualizarCalendario();
 }
 
-// Resumo
 function atualizarResumoGeral() {
   const hoje = new Date();
   const semanaInicio = new Date(hoje);
@@ -216,10 +215,7 @@ function calcularResumoPeriodo(inicio, fim) {
       totalCorridas += valorDia;
 
       const d = entrada.despesas || {};
-      totalDespesas +=
-        (parseFloat(d.combustivel) || 0) +
-        (parseFloat(d.alimentacao) || 0) +
-        (parseFloat(d.limpeza) || 0);
+      totalDespesas += (parseFloat(d.combustivel) || 0) + (parseFloat(d.alimentacao) || 0) + (parseFloat(d.limpeza) || 0);
     }
   }
 
@@ -239,45 +235,74 @@ function formatarResumo(r) {
   `;
 }
 
-// Cria o gráfico de lucros por dia do mês atual
 function atualizarGraficoLucro() {
-  const mesAtual = new Date().getMonth();
-  const anoAtual = new Date().getFullYear();
+  const filtro = document.getElementById('filtroPeriodo').value;
+  const hoje = new Date();
+  let inicio, fim;
+
+  if (filtro === 'semana') {
+    inicio = new Date(hoje);
+    inicio.setDate(hoje.getDate() - hoje.getDay());
+    fim = new Date(hoje);
+  } else if (filtro === 'mes') {
+    inicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+    fim = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
+  } else if (filtro === 'mesPassado') {
+    inicio = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
+    fim = new Date(hoje.getFullYear(), hoje.getMonth(), 0);
+  }
 
   const dadosPorDia = [];
 
-  for (let dia = 1; dia <= 31; dia++) {
-    const dataStr = `${anoAtual}-${(mesAtual + 1).toString().padStart(2, '0')}-${dia.toString().padStart(2, '0')}`;
-    const dados = dadosUber[dataStr];
-    if (dados) {
-      const totalCorridas = dados.corridas.reduce((s, c) => s + c.valor, 0);
-      const despesas = dados.despesas || {};
-      const totalDespesas = 
-        (parseFloat(despesas.combustivel) || 0) + 
-        (parseFloat(despesas.alimentacao) || 0) + 
-        (parseFloat(despesas.limpeza) || 0);
+  for (const dataStr in dadosUber) {
+    const dt = new Date(dataStr);
+    if (dt >= inicio && dt <= fim) {
+      const entrada = dadosUber[dataStr];
+      const totalCorridas = entrada.corridas.reduce((s, c) => s + c.valor, 0);
+      const despesas = entrada.despesas || {};
+      const totalDespesas = (parseFloat(despesas.combustivel) || 0) + (parseFloat(despesas.alimentacao) || 0) + (parseFloat(despesas.limpeza) || 0);
       const lucro = totalCorridas - totalDespesas;
-      dadosPorDia.push({ dia, lucro });
+      dadosPorDia.push({ dia: dt.getDate(), lucro });
     }
   }
 
+  dadosPorDia.sort((a, b) => a.dia - b.dia);
+
+  const meta = parseFloat(document.getElementById('metaDiaria').value) || 250;
+
   const ctx = document.getElementById('lucroChart').getContext('2d');
   if (window.graficoLucroInstance) {
-    window.graficoLucroInstance.destroy(); // remove gráfico antigo
+    window.graficoLucroInstance.destroy();
   }
 
   window.graficoLucroInstance = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: dadosPorDia.map(d => `Dia ${d.dia}`),
-      datasets: [{
-        label: 'Lucro (R$)',
-        data: dadosPorDia.map(d => d.lucro),
-        backgroundColor: '#2ecc71'
-      }]
+      datasets: [
+        {
+          label: 'Lucro (R$)',
+          data: dadosPorDia.map(d => d.lucro),
+          backgroundColor: '#2ecc71'
+        },
+        {
+          type: 'line',
+          label: 'Meta Diária',
+          data: dadosPorDia.map(() => meta),
+          borderColor: '#e74c3c',
+          borderWidth: 2,
+          fill: false,
+          pointRadius: 0
+        }
+      ]
     },
     options: {
       responsive: true,
+      plugins: {
+        legend: {
+          position: 'top'
+        }
+      },
       scales: {
         y: {
           beginAtZero: true
@@ -286,3 +311,7 @@ function atualizarGraficoLucro() {
     }
   });
 }
+
+window.onload = () => {
+  atualizarGraficoLucro();
+};

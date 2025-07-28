@@ -20,6 +20,37 @@
     <!-- Tela 1: Calendário -->
     <div id="tela1">
       <div id="calendario" class="calendario-grid"></div>
+
+      <!-- Resumo geral e gráfico apenas nesta tela -->
+      <div id="resumo-geral">
+        <h2>Resumo Geral</h2>
+
+        <div style="display: flex; gap: 30px; align-items: start;">
+          <div>
+            <h3>Semana</h3>
+            <div id="resumo-semana"></div>
+
+            <h3>Mês</h3>
+            <div id="resumo-mes"></div>
+
+            <label for="metaDiaria">Meta Diária de Lucro (R$):</label>
+            <input type="number" id="metaDiaria" value="250">
+          </div>
+
+          <div>
+            <h3>Lucro por Dia</h3>
+
+            <label for="filtroPeriodo">Filtrar por:</label>
+            <select id="filtroPeriodo" onchange="atualizarGraficoLucro()">
+              <option value="semana">Semana Atual</option>
+              <option value="mes">Mês Atual</option>
+              <option value="mesPassado">Mês Passado</option>
+            </select>
+
+            <canvas id="lucroChart" width="400" height="200"></canvas>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Tela 2: Detalhes do dia -->
@@ -48,37 +79,6 @@
       <div id="botoes-despesas">
         <button onclick="salvarDespesas()">Salvar Despesas</button>
         <button onclick="voltarParaCorridas()">Voltar para Corridas</button>
-      </div>
-    </div>
-
-    <!-- Resumo geral e gráfico -->
-    <div id="resumo-geral">
-      <h2>Resumo Geral</h2>
-
-      <div style="display: flex; gap: 30px; align-items: start;">
-        <div>
-          <h3>Semana</h3>
-          <div id="resumo-semana"></div>
-
-          <h3>Mês</h3>
-          <div id="resumo-mes"></div>
-
-          <label for="metaDiaria">Meta Diária de Lucro (R$):</label>
-          <input type="number" id="metaDiaria" value="250">
-        </div>
-
-        <div>
-          <h3>Lucro por Dia</h3>
-
-          <label for="filtroPeriodo">Filtrar por:</label>
-          <select id="filtroPeriodo" onchange="atualizarGraficoLucro()">
-            <option value="semana">Semana Atual</option>
-            <option value="mes">Mês Atual</option>
-            <option value="mesPassado">Mês Passado</option>
-          </select>
-
-          <canvas id="graficoLucro" width="400" height="200"></canvas>
-        </div>
       </div>
     </div>
   </div>
