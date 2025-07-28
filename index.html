@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <title>Uber Lau Driver</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-192.png" type="image/png">
+  <meta name="theme-color" content="#000000">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    .hidden {
-      display: none;
-    }
-  </style>
 </head>
 <body>
   <!-- Splash screen -->
@@ -20,7 +19,7 @@
     </div>
   </div>
 
-  <div class="container hidden" id="app-container">
+  <div class="container">
     <h1>Uber Lau Driver</h1>
 
     <!-- Seleção de mês -->
@@ -31,7 +30,7 @@
     </div>
 
     <!-- Tela 1: Calendário -->
-    <div id="tela1" class="hidden">
+    <div id="tela1">
       <div id="calendario" class="calendario-grid"></div>
 
       <!-- Resumo geral e gráfico apenas nesta tela -->
@@ -107,5 +106,12 @@
   </div>
 
   <script src="script.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js")
+        .then(() => console.log("Service Worker registrado com sucesso."))
+        .catch(error => console.error("Falha ao registrar o Service Worker:", error));
+    }
+  </script>
 </body>
 </html>
