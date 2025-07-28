@@ -1,11 +1,20 @@
 // Uber Lau Driver - script.js completo com todas as funcionalidades integradas
+// Mostra o app após o splash
+function removerSplash() {
+  document.getElementById("splash-screen").style.display = "none";
+  document.getElementById("app-container").classList.remove("hidden");
+  document.getElementById("tela1").classList.remove("hidden"); // garante que o calendário apareça
+}
+
+// Dispara após 1.5 segundos
+window.addEventListener("load", () => {
+  setTimeout(removerSplash, 1500);
+});
+
 
 let dataAtual = new Date();
 let dataSelecionada = null;
-
 let dadosUber = JSON.parse(localStorage.getItem('dadosUber') || '{}');
-
-atualizarCalendario();
 
 function alterarMes(direcao) {
   dataAtual.setMonth(dataAtual.getMonth() + direcao);
@@ -25,6 +34,8 @@ function atualizarCalendario() {
   const nomeMes = dataAtual.toLocaleString('pt-BR', { month: 'long' });
   mesAnoLabel.textContent = `${nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1)} ${ano}`;
 
+  const meta = parseFloat(document.getElementById('metaDiaria')?.value) || 250;
+
   for (let i = 0; i < primeiroDia; i++) {
     calendario.appendChild(document.createElement('div'));
   }
@@ -33,7 +44,14 @@ function atualizarCalendario() {
     const div = document.createElement('div');
     const dataStr = `${ano}-${(mes + 1).toString().padStart(2, '0')}-${dia.toString().padStart(2, '0')}`;
     div.textContent = dia;
-    div.classList.add(dadosUber[dataStr] ? 'com-dados' : 'sem-dados');
+
+    const dadosDia = dadosUber[dataStr];
+    const lucro = calcularLucroDoDia(dadosDia);
+
+    if (dadosDia) div.classList.add('com-dados');
+    else div.classList.add('sem-dados');
+
+    if (lucro >= meta) div.classList.add('meta-batida');
 
     const hoje = new Date();
     if (dia === hoje.getDate() && mes === hoje.getMonth() && ano === hoje.getFullYear()) {
@@ -45,8 +63,14 @@ function atualizarCalendario() {
   }
 
   atualizarResumoGeral();
-  atualizarGraficoLucro();
-  verificarMetaBatidaHoje();
+}
+
+function calcularLucroDoDia(dadosDia) {
+  if (!dadosDia) return 0;
+  const total = dadosDia.corridas?.reduce((s, c) => s + c.valor, 0) || 0;
+  const despesas = dadosDia.despesas || {};
+  const gasto = ['combustivel', 'alimentacao', 'limpeza'].reduce((a, k) => a + (parseFloat(despesas[k]) || 0), 0);
+  return total - gasto;
 }
 
 function abrirDia(dataStr) {
@@ -74,6 +98,7 @@ function mostrarFormulario(dataStr) {
     <h3>Corridas Salvas</h3>
     <div id="lista-corridas"></div>
     <button onclick="abrirTelaDespesas()">Ir para Despesas</button>
+    <button onclick="salvarDadosDia()">Salvar Dados do Dia</button>
   `;
 
   atualizarListaCorridas(dados.corridas);
@@ -82,11 +107,8 @@ function mostrarFormulario(dataStr) {
 function salvarCorrida() {
   const km = parseFloat(document.getElementById('novaKm').value);
   const valor = parseFloat(document.getElementById('novoValor').value);
-
   if (isNaN(km) || isNaN(valor)) return alert('Preencha KM e Valor corretamente.');
-
   if (!dadosUber[dataSelecionada]) dadosUber[dataSelecionada] = { corridas: [], despesas: {} };
-
   dadosUber[dataSelecionada].corridas.push({ km, valor });
   document.getElementById('novaKm').value = '';
   document.getElementById('novoValor').value = '';
@@ -117,9 +139,7 @@ function salvarDespesas() {
   const combustivel = parseFloat(document.getElementById('combustivel').value) || 0;
   const alimentacao = parseFloat(document.getElementById('alimentacao').value) || 0;
   const limpeza = parseFloat(document.getElementById('limpeza').value) || 0;
-
   if (!dadosUber[dataSelecionada]) dadosUber[dataSelecionada] = { corridas: [], despesas: {} };
-
   dadosUber[dataSelecionada].despesas = { combustivel, alimentacao, limpeza };
   localStorage.setItem('dadosUber', JSON.stringify(dadosUber));
   alert('Despesas salvas!');
@@ -135,6 +155,19 @@ function voltarParaCorridas() {
 function salvarDadosDia() {
   const odInicial = parseFloat(document.getElementById('odInicial').value);
   const odFinal = parseFloat(document.getElementById('odFinal').value);
+
+  if (isNaN(odInicial) || isNaN(odFinal)) return alert('Preencha os campos de odômetro corretamente.');
+  if (odFinal < odInicial) return alert('O odômetro final não pode ser menor que o inicial.');
+
+  const dataAnterior = new Date(dataSelecionada);
+  dataAnterior.setDate(dataAnterior.getDate() - 1);
+  const dataAntStr = dataAnterior.toISOString().split('T')[0];
+  const odFinalAnterior = dadosUber[dataAntStr]?.odometroFinal;
+
+  if (odFinalAnterior && odInicial < odFinalAnterior) {
+    return alert(`Odômetro inicial deve ser maior ou igual a ${odFinalAnterior} (final do dia anterior).`);
+  }
+
   if (!dadosUber[dataSelecionada]) dadosUber[dataSelecionada] = { corridas: [], despesas: {} };
   dadosUber[dataSelecionada].odometroInicial = odInicial;
   dadosUber[dataSelecionada].odometroFinal = odFinal;
@@ -203,10 +236,8 @@ function atualizarGraficoLucro() {
     const dt = new Date(dataStr);
     if (dt >= inicio && dt <= fim) {
       const entrada = dadosUber[dataStr];
-      const totalCorridas = entrada.corridas.reduce((s, c) => s + c.valor, 0);
-      const despesas = entrada.despesas || {};
-      const totalDespesas = ['combustivel', 'alimentacao', 'limpeza'].reduce((t, k) => t + (parseFloat(despesas[k]) || 0), 0);
-      dadosPorDia.push({ dia: dt.getDate(), lucro: totalCorridas - totalDespesas });
+      const lucro = calcularLucroDoDia(entrada);
+      dadosPorDia.push({ dia: dt.getDate(), lucro });
     }
   }
 
@@ -229,36 +260,17 @@ function atualizarGraficoLucro() {
   });
 }
 
-function verificarMetaBatidaHoje() {
-  const hoje = new Date();
-  const dataStr = hoje.toISOString().split('T')[0];
-  const entrada = dadosUber[dataStr];
-  if (!entrada) return;
-  const totalCorridas = entrada.corridas.reduce((s, c) => s + c.valor, 0);
-  const despesas = entrada.despesas || {};
-  const totalDespesas = ['combustivel', 'alimentacao', 'limpeza'].reduce((t, k) => t + (parseFloat(despesas[k]) || 0), 0);
-  const lucro = totalCorridas - totalDespesas;
-  const meta = parseFloat(document.getElementById('metaDiaria').value) || 250;
-
-  const alerta = document.getElementById('alertaMeta');
-  if (lucro >= meta) {
-    alerta.textContent = `🎉 Meta do dia batida! Lucro: R$ ${lucro.toFixed(2)}`;
-    alerta.style.display = 'block';
-  } else {
-    alerta.textContent = '';
-    alerta.style.display = 'none';
-  }
-}
-
+// Corrigido: inicialização após o splash
 function inicializarApp() {
+  document.getElementById('tela1').classList.remove('hidden');
   atualizarCalendario();
   atualizarGraficoLucro();
 }
 
 window.onload = function () {
-  inicializarApp();
   setTimeout(() => {
     const splash = document.getElementById('splash-screen');
     if (splash) splash.style.display = 'none';
+    inicializarApp();
   }, 2000);
 };

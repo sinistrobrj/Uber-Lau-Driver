@@ -5,17 +5,22 @@
   <title>Uber Lau Driver</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
 <body>
   <!-- Splash screen -->
-<div id="splash-screen">
-  <div class="splash-content">
-    <h1>🚗 Uber Lau Driver</h1>
-    <p>Carregando...</p>
+  <div id="splash-screen">
+    <div class="splash-content">
+      <h1>🚗 Uber Lau Driver</h1>
+      <p>Carregando...</p>
+    </div>
   </div>
-</div>
 
-  <div class="container">
+  <div class="container hidden" id="app-container">
     <h1>Uber Lau Driver</h1>
 
     <!-- Seleção de mês -->
@@ -26,7 +31,7 @@
     </div>
 
     <!-- Tela 1: Calendário -->
-    <div id="tela1">
+    <div id="tela1" class="hidden">
       <div id="calendario" class="calendario-grid"></div>
 
       <!-- Resumo geral e gráfico apenas nesta tela -->
