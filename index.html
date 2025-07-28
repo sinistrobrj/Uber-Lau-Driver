@@ -8,35 +8,54 @@
 </head>
 <body>
   <div class="container">
-    <!-- Tela 1: Calendário -->
+    <!-- Tela 1: Calendário + Resumo -->
     <div id="tela1">
-      <!-- Resumo semanal e mensal -->
-<div id="resumo-geral">
-  <h2>Resumo Semanal</h2>
-  <div id="resumo-semana"></div>
-
-  <h2>Resumo Mensal</h2>
-  <div id="resumo-mes"></div>
-</div>
-
       <h1>Lucros Uber - Selecione o Dia</h1>
+
       <div class="mes-selecao">
         <button onclick="alterarMes(-1)">←</button>
         <span id="mesAnoAtual"></span>
         <button onclick="alterarMes(1)">→</button>
       </div>
+
       <div id="calendario" class="calendario-grid"></div>
+
+      <div id="resumo-geral">
+        <h2>Resumo Semanal</h2>
+        <div id="resumo-semana"></div>
+
+        <h2>Resumo Mensal</h2>
+        <div id="resumo-mes"></div>
+      </div>
     </div>
 
-    <!-- Telas 2 a 4 (reutilizáveis) -->
+    <!-- Tela 2: Corridas do Dia -->
     <div id="conteudo-dia" class="hidden">
       <h2>Dia: <span id="dataSelecionada"></span></h2>
 
       <div id="dados-formulario"></div>
       <div id="botoes-dados">
-        <button onclick="salvarDadosDia()">💾 Salvar</button>
-        <button onclick="excluirDadosDia()">🗑️ Excluir</button>
+        <button onclick="salvarDadosDia()">💾 Salvar Tudo</button>
         <button onclick="voltarParaCalendario()">↩ Voltar</button>
+      </div>
+    </div>
+
+    <!-- Tela 3: Despesas -->
+    <div id="tela-despesas" class="hidden">
+      <h2>Despesas - <span id="dataDespesas"></span></h2>
+
+      <label>Combustível (R$):</label>
+      <input type="number" id="combustivel">
+
+      <label>Alimentação (R$):</label>
+      <input type="number" id="alimentacao">
+
+      <label>Limpeza (R$):</label>
+      <input type="number" id="limpeza">
+
+      <div id="botoes-despesas">
+        <button onclick="salvarDespesas()">💾 Salvar Despesas</button>
+        <button onclick="voltarParaCorridas()">↩ Voltar para Corridas</button>
       </div>
     </div>
   </div>
